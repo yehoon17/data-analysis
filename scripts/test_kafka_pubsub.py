@@ -2,6 +2,11 @@ from kafka import KafkaProducer, KafkaConsumer
 import psycopg2
 import json
 import time
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv('../.env')
 
 # Kafka producer
 def produce_data_to_kafka():
@@ -36,11 +41,11 @@ def consume_data_and_store_in_postgres():
         consumer_timeout_ms=10000  # Exit after 10 seconds of inactivity
     )
 
-    # PostgreSQL connection
+    # PostgreSQL connection using environment variables
     conn = psycopg2.connect(
-        dbname="mydb",
-        user="user",
-        password="password",
+        dbname=os.getenv('POSTGRES_DB'),
+        user=os.getenv('POSTGRES_USER'),
+        password=os.getenv('POSTGRES_PASSWORD'),
         host="localhost",
         port="5433"
     )
@@ -83,6 +88,6 @@ def consume_data_and_store_in_postgres():
 if __name__ == "__main__":
     # Run producer
     produce_data_to_kafka()
-    
+
     # Run consumer
     consume_data_and_store_in_postgres()
