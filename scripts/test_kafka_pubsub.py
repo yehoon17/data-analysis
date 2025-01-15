@@ -41,7 +41,7 @@ def consume_data_and_store_in_postgres():
         user="user",
         password="password",
         host="localhost",
-        port="5432"
+        port="5433"
     )
     cursor = conn.cursor()
 
