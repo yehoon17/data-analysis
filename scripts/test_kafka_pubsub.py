@@ -32,7 +32,8 @@ def consume_data_and_store_in_postgres():
         bootstrap_servers='localhost:9092',
         value_deserializer=lambda v: json.loads(v.decode('utf-8')),
         auto_offset_reset='earliest',
-        enable_auto_commit=True
+        enable_auto_commit=True,
+        consumer_timeout_ms=10000  # Exit after 10 seconds of inactivity
     )
 
     # PostgreSQL connection
@@ -56,21 +57,28 @@ def consume_data_and_store_in_postgres():
     cursor.execute(create_table_query)
     conn.commit()
 
-    for message in consumer:
-        record = message.value
-        print(f"Consumed: {record}")
+    try:
+        for message in consumer:
+            record = message.value
+            print(f"Consumed: {record}")
 
-        # Insert data into PostgreSQL
-        insert_query = """
-        INSERT INTO users (id, name, age) VALUES (%s, %s, %s)
-        ON CONFLICT (id) DO NOTHING;
-        """
-        cursor.execute(insert_query, (record['id'], record['name'], record['age']))
-        conn.commit()
+            # Insert data into PostgreSQL
+            insert_query = """
+            INSERT INTO users (id, name, age) VALUES (%s, %s, %s)
+            ON CONFLICT (id) DO NOTHING;
+            """
+            cursor.execute(insert_query, (record['id'], record['name'], record['age']))
+            conn.commit()
 
-    # Clean up
-    cursor.close()
-    conn.close()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+
+    finally:
+        print("Consumer timed out or finished processing.")
+        # Clean up
+        consumer.close()
+        cursor.close()
+        conn.close()
 
 if __name__ == "__main__":
     # Run producer
