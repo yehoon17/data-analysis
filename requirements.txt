@@ -1,0 +1,5 @@
+kafka-python==2.0.2
+psycopg2==2.9.10
+kafka-python==2.0.2
+psycopg2==2.9.10
+python-dotenv==1.0.1
