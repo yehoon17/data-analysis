@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17.2
+    container_name: postgres
+    env_file:
+      - ./.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres/init-postgres-jupyter.sql:/docker-entrypoint-initdb.d/init.sql
+
+  jupyter:
+    image: jupyter/scipy-notebook:python-3.11
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./raw_data:/home/jovyan/raw_data
