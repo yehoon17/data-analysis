@@ -1,27 +1,13 @@
--- Create the role 'jupyter_user' only if it doesn't exist
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_roles WHERE rolname = 'jupyter_user'
-    ) THEN
-        CREATE ROLE jupyter_user WITH LOGIN PASSWORD 'your_password';
-    END IF;
-END $$;
+-- Create the role 'jupyter_user'
+CREATE ROLE jupyter_user WITH LOGIN PASSWORD 'your_password';
 
--- Create the database 'neo_bank' only if it doesn't exist
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_database WHERE datname = 'neo_bank'
-    ) THEN
-        CREATE DATABASE neo_bank
-            OWNER jupyter_user
-            ENCODING 'UTF8'
-            LC_COLLATE='C'
-            LC_CTYPE='C'
-            TEMPLATE=template0;
-    END IF;
-END $$;
+-- Create the database 'neo_bank'
+CREATE DATABASE neo_bank
+    OWNER jupyter_user
+    ENCODING 'UTF8'
+    LC_COLLATE='C'
+    LC_CTYPE='C'
+    TEMPLATE=template0;
 
 -- Restrict permissions on the default 'postgres' database
 REVOKE CONNECT ON DATABASE postgres FROM PUBLIC;
