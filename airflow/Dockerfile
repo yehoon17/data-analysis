@@ -6,6 +6,7 @@ USER root
 RUN apt-get update && apt-get install -y \
     krb5-user \
     libkrb5-dev \
+    build-essential \
     && apt-get clean
 
 # Switch to airflow user
