@@ -34,7 +34,7 @@
    docker-compose up -d
    ```
 
-3. **Kaggle 데이터 다운로드**
+3. **Kaggle 데이터 다운로드**  
    Kaggle API 설정: [Kaggle API 설정 가이드](https://github.com/yehoon17/data-analysis/blob/data-analysis/raw_data/README.md)
 
    neo bank 데이터 다운로드:
