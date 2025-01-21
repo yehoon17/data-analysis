@@ -79,7 +79,7 @@ services:
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
       - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
       - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9000
-      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng 
+      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng apache-airflow-providers-apache-kafka apache-airflow-providers-apache-hdfs
     depends_on:
       - postgres
       - kafka
@@ -102,7 +102,7 @@ services:
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
       - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
       - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9000      
-      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng 
+      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng apache-airflow-providers-apache-kafka apache-airflow-providers-apache-hdfs
     depends_on:
       - postgres
       - kafka
