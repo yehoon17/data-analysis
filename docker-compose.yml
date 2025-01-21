@@ -9,6 +9,7 @@ services:
       
   kafka:
     image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka
     depends_on:
       - zookeeper
     environment:
@@ -76,8 +77,13 @@ services:
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9000
+      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng 
     depends_on:
       - postgres
+      - kafka
+      - namenode
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
@@ -94,8 +100,13 @@ services:
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9000      
+      - _PIP_ADDITIONAL_REQUIREMENTS=kafka-python-ng 
     depends_on:
       - postgres
+      - kafka
+      - namenode
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
