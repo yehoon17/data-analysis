@@ -33,3 +33,11 @@
    ```bash
    docker-compose up -d
    ```
+
+3. **Kaggle 데이터 다운로드**
+   Kaggle API 설정: 
+
+   neo bank 데이터 다운로드:
+   ```bash
+   ./raw_data/download_neo_bank_data.sh
+   ```
