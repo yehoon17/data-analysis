@@ -35,7 +35,7 @@ services:
       - "8081:8080"
 
   namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    image: hdfs-custom:latest
     container_name: namenode
     ports:
       - "9870:9870" # Web UI for HDFS NameNode
