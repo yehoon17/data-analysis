@@ -65,3 +65,8 @@ Airflow 작업에 필요한 디렉토리와 권한을 HDFS에서 설정
    ```bash
    hdfs dfs -chmod 770 /user/airflow
    ```
+
+
+# TODO
+ - [ ] Dockerfile 빌드 문서 작성 or docker-compose.yml 수정
+ 
