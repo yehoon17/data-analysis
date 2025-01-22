@@ -86,6 +86,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./raw_data:/opt/airflow/raw_data
     ports:
       - "8080:8080"
     command: >
