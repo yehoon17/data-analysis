@@ -8,10 +8,10 @@ def upload_to_hdfs(**kwargs):
     Upload a Parquet file to HDFS.
     """
     source_path = "/opt/airflow/raw_data/neo-bank-non-sub-churn-prediction/train_2008.parquet"
-    destination_path = "/user/hdfs/train_2008.parquet"
+    destination_path = "/user/airflow/train_2008.parquet"
     
     # Instantiate the WebHDFS hook
-    hdfs_hook = WebHDFSHook(webhdfs_conn_id="hdfs_default")
+    hdfs_hook = WebHDFSHook(webhdfs_conn_id="hdfs_default", proxy_user="airflow")
     
     # Upload file to HDFS
     hdfs_hook.load_file(

@@ -41,3 +41,27 @@
    ```bash
    ./raw_data/download_neo_bank_data.sh
    ```
+   
+### HDFS 설정
+
+Airflow 작업에 필요한 디렉토리와 권한을 HDFS에서 설정
+
+1. **Hadoop Namenode 컨테이너에 접근:**
+   ```bash
+   docker exec -it namenode bash
+   ```
+
+2. **HDFS에 Airflow 디렉토리 생성:**
+   ```bash
+   hdfs dfs -mkdir -p /user/airflow
+   ```
+
+3. **디렉토리의 소유자 변경:**
+   ```bash
+   hdfs dfs -chown airflow:supergroup /user/airflow
+   ```
+
+4. **디렉토리 권한 설정:**
+   ```bash
+   hdfs dfs -chmod 770 /user/airflow
+   ```
