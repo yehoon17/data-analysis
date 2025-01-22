@@ -1,0 +1,2 @@
+kafka-python-ng==2.2.3
+apache-airflow-providers-apache-hdfs==4.7.0
