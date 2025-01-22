@@ -9,6 +9,7 @@ services:
       
   kafka:
     image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka
     depends_on:
       - zookeeper
     environment:
@@ -31,7 +32,34 @@ services:
         KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
         KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     ports:
-      - "9000:8080"
+      - "8081:8080"
+
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    ports:
+      - "9870:9870" # Web UI for HDFS NameNode
+      - "9000:9000" # RPC port
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    # volumes:
+    #   - namenode-data:/hadoop/dfs/name
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_hostname=datanode
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    depends_on:
+      - namenode
+    # volumes:
+      # - datanode-data:/hadoop/dfs/data
 
   postgres:
     image: postgres:17.2
@@ -44,16 +72,21 @@ services:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   airflow-webserver:
-    image: apache/airflow:2.10.4
+    image: airflow-custom:latest
     container_name: airflow-webserver
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870
     depends_on:
       - postgres
+      - kafka
+      - namenode
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./raw_data:/opt/airflow/raw_data
     ports:
       - "8080:8080"
     command: >
@@ -62,16 +95,21 @@ services:
                 airflow webserver"
 
   airflow-scheduler:
-    image: apache/airflow:2.10.4
+    image: airflow-custom:latest
     container_name: airflow-scheduler
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870      
     depends_on:
       - postgres
+      - kafka
+      - namenode
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./raw_data:/opt/airflow/raw_data
     command: >
       bash -c "airflow scheduler"
     restart: always

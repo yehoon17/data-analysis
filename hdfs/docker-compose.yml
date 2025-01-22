@@ -1,0 +1,66 @@
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    ports:
+      - "9870:9870" # Web UI for HDFS NameNode
+      - "9000:9000" # RPC port
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    # volumes:
+    #   - namenode-data:/hadoop/dfs/name
+    networks:
+      - hadoop
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_hostname=datanode
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    # volumes:
+      # - datanode-data:/hadoop/dfs/data
+    networks:
+      - hadoop
+
+  # statestore:
+  #   image: apache/impala:4.4.1-statestored
+  #   container_name: statestore
+  #   depends_on:
+  #     - namenode
+  #   networks:
+  #     - hadoop
+
+  # catalogd:
+  #   image: apache/impala:4.4.1-catalogd
+  #   container_name: catalogd
+  #   depends_on:
+  #     - statestore
+  #   environment:
+  #     - HIVE_METASTORE_URIS=thrift://namenode:9083
+  #   networks:
+  #     - hadoop
+
+  # impalad_coordinator:
+  #   image: apache/impala:4.4.1-impalad_coordinator
+  #   container_name: impalad_coordinator
+  #   depends_on:
+  #     - statestore
+  #     - catalogd
+  #   ports:
+  #     - "21000:21000" # Impala JDBC/ODBC port
+  #     - "25000:25000" # Impala Web UI
+  #   networks:
+  #     - hadoop
+
+# volumes:
+#   namenode-data:
+#   datanode-data:
+
+networks:
+  hadoop:
