@@ -109,6 +109,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./raw_data:/opt/airflow/raw_data
     command: >
       bash -c "airflow scheduler"
     restart: always
