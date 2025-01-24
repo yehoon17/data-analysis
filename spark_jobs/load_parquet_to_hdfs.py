@@ -5,6 +5,7 @@ spark = SparkSession.builder \
     .appName("Load Parquet to HDFS") \
     .master("spark://spark-master:7077") \
     .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:9000") \
+    .config("spark.sql.legacy.parquet.nanosAsLong", "true") \
     .getOrCreate()
 
 # Define paths
