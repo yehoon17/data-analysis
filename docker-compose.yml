@@ -79,6 +79,7 @@ services:
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
       - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
       - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870
+      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077
     depends_on:
       - postgres
       - kafka
@@ -101,7 +102,8 @@ services:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
       - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
-      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870      
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870  
+      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077    
     depends_on:
       - postgres
       - kafka
