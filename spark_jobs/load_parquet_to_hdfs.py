@@ -6,6 +6,7 @@ spark = SparkSession.builder \
     .master("spark://spark-master:7077") \
     .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:9000") \
     .config("spark.sql.legacy.parquet.nanosAsLong", "true") \
+    .config("spark.sql.debug.maxToStringFields", "1000") \
     .getOrCreate()
 
 # Define paths
