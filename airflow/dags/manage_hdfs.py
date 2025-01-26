@@ -19,5 +19,5 @@ with DAG(
     create_user_hdfs_dir = PythonOperator(
         task_id='create_user_hdfs_dir',
         python_callable=create_and_manage_user_hdfs_directory,
-        op_kwargs={'username': 'example_user'},  
+        op_kwargs={'username': 'spark', 'folder': 'test'},  
     )
