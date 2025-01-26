@@ -9,9 +9,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # g++ \
     heimdal-dev \
     # libsasl2-dev \
+    openjdk-17-jre-headless \
   && apt-get autoremove -yqq --purge \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+
+# Set JAVA_HOME environment variable for Spark compatibility
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Switch back to airflow user
 USER airflow

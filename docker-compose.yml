@@ -72,7 +72,7 @@ services:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   airflow-webserver:
-    image: airflow-custom:latest
+    image: airflow-custom:v3
     container_name: airflow-webserver
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
@@ -96,14 +96,14 @@ services:
                 airflow webserver"
 
   airflow-scheduler:
-    image: airflow-custom:latest
+    image: airflow-custom:v3
     container_name: airflow-scheduler
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
       - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
       - AIRFLOW_CONN_KAFKA_DEFAULT=kafka://kafka:9093
       - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870  
-      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077    
+      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077
     depends_on:
       - postgres
       - kafka
