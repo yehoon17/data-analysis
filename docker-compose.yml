@@ -87,6 +87,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./spark_jobs:/opt/airflow/spark_jobs
       - ./raw_data:/opt/airflow/raw_data
     ports:
       - "8080:8080"
@@ -111,6 +112,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
+      - ./spark_jobs:/opt/airflow/spark_jobs
       - ./raw_data:/opt/airflow/raw_data
     command: >
       bash -c "airflow scheduler"
