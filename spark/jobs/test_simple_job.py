@@ -3,7 +3,7 @@
 In `spark-master` container:
  `spark-submit /opt/spark/jobs/test_simple_job.py`
 In `airflow-webserver` container:
- `spark-submit --master spark://spark-master:7077 /opt/airflow/spark_jobs/test_simple_job.py`
+ `spark-submit --master spark://spark-master:7077 /opt/spark/jobs/test_simple_job.py`
 
 Result:
  +-----+-----+

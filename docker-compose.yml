@@ -87,7 +87,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./spark/jobs:/opt/spark/jobs
       - ./raw_data:/opt/airflow/raw_data
     ports:
       - "8080:8080"
@@ -112,7 +112,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./spark/jobs:/opt/spark/jobs
       - ./raw_data:/opt/airflow/raw_data
     command: >
       bash -c "airflow scheduler"
@@ -131,7 +131,7 @@ services:
       - "18080:8080"  # Spark Web UI
     volumes:
       - ./raw_data:/opt/spark/raw_data
-      - ./spark_jobs:/opt/spark/jobs
+      - ./spark/jobs:/opt/spark/jobs
 
   spark-worker:
     image: bitnami/spark:3.5.4

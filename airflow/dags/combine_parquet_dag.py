@@ -32,7 +32,7 @@ with DAG(
     combine_parquet = SparkSubmitOperator(
         task_id='combine_parquet',
         conn_id='spark_default',  # Uses AIRFLOW_CONN_SPARK_DEFAULT
-        application='/opt/airflow/spark_jobs/combine_parquet.py',  # Path to Spark job in the container
+        application='/opt/spark/jobs/combine_parquet.py',  # Path to Spark job in the container
         name='combine_parquet_job',
         application_args=[
             'file:///opt/spark/raw_data/neo-bank-non-sub-churn-prediction/train_*.parquet', # Input files (wildcard)

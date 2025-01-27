@@ -25,7 +25,7 @@ with DAG(
     # SparkSubmitOperator to run the Spark job
     run_spark_job = SparkSubmitOperator(
         task_id='spark_submit_task',
-        application='/opt/airflow/spark_jobs/test_simple_job.py',  
+        application='/opt/spark/jobs/test_simple_job.py',  
         conn_id='spark_default',  
         name='example_spark_job',
         execution_timeout=timedelta(minutes=10),
