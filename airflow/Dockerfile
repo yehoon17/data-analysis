@@ -22,6 +22,6 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 USER airflow
 
 # Copy and install Python dependencies
-COPY requirements.txt /requirements.txt
+COPY /airflow/requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r /requirements.txt \
   && pip uninstall -y argparse
