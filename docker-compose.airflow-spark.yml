@@ -1,0 +1,106 @@
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    ports:
+      - "9870:9870" # Web UI for HDFS NameNode
+      - "9000:9000" # RPC port
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_hostname=datanode
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    depends_on:
+      - namenode
+
+  postgres:
+    image: postgres:17.2
+    container_name: postgres
+    env_file:
+      - ./.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  airflow-webserver:
+    image: airflow-custom:v3
+    container_name: airflow-webserver
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870
+      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077
+    depends_on:
+      - postgres
+      - namenode
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./spark/jobs:/opt/spark/jobs
+      - ./raw_data:/opt/airflow/raw_data
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "airflow db migrate &&
+                airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+                airflow webserver"
+
+  airflow-scheduler:
+    image: airflow-custom:v3
+    container_name: airflow-scheduler
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
+      - AIRFLOW_CONN_POSTGRES_DEFAULT=${AIRFLOW_CONN_POSTGRES_DEFAULT}
+      - AIRFLOW_CONN_HDFS_DEFAULT=hdfs://namenode:9870  
+      - AIRFLOW_CONN_SPARK_DEFAULT=spark://spark-master:7077
+    depends_on:
+      - postgres
+      - namenode
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./spark/jobs:/opt/spark/jobs
+      - ./raw_data:/opt/airflow/raw_data
+    command: >
+      bash -c "airflow scheduler"
+    restart: always
+
+  spark-master:
+    image: bitnami/spark:3.5.4
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_IP=spark-master
+    ports:
+      - "7077:7077"  # Spark Master Port
+      - "18080:8080"  # Spark Web UI
+    volumes:
+      - ./raw_data:/opt/spark/raw_data
+      - ./spark/jobs:/opt/spark/jobs
+
+  spark-worker:
+    image: bitnami/spark:3.5.4
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+    depends_on:
+      - spark-master
+    ports:
+      - "18081:8081"  # Spark Worker UI
+    volumes:
+      - ./raw_data:/opt/spark/raw_data
