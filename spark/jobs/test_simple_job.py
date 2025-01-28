@@ -7,11 +7,11 @@ In `airflow-webserver` container:
 
 Result:
  +-----+-----+
- | name|value|
+ |value|count|
  +-----+-----+
- |Alice|    1|
- |  Bob|    2|
- |Cathy|    3|
+ |    3|    1|
+ |    2|    1|
+ |    1|    1|
  +-----+-----+
 """
 
