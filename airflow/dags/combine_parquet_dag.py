@@ -35,9 +35,18 @@ with DAG(
         application='/opt/spark/jobs/combine_parquet.py',  # Path to Spark job in the container
         name='combine_parquet_job',
         application_args=[
-            'file:///opt/spark/raw_data/neo-bank-non-sub-churn-prediction/train_*.parquet', # Input files (wildcard)
+            'file:///opt/airflow/raw_data/neo-bank-non-sub-churn-prediction/train_200*.parquet', # Input files (wildcard)
             'hdfs://namenode:9000/user/spark/neo-bank/'
         ],
+        # conf={
+        #     'spark.cores.max': '2',
+        #     'spark.executor.memory': '1G',
+        #     'spark.executor.instances': '1',
+        # },
+        # executor_cores=1,
+        # executor_memory='1G',
+        # driver_memory='512M',
+        # verbose=True,
     )
 
     create_user_hdfs_dir >> combine_parquet
