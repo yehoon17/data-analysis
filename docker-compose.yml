@@ -45,8 +45,8 @@ services:
       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
       - CORE_CONF_hadoop_http_staticuser_user=root
       - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
-    # volumes:
-    #   - namenode-data:/hadoop/dfs/name
+    volumes:
+      - namenode-data:/hadoop/dfs/name
 
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
@@ -58,8 +58,8 @@ services:
       - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
     depends_on:
       - namenode
-    # volumes:
-      # - datanode-data:/hadoop/dfs/data
+    volumes:
+      - datanode-data:/hadoop/dfs/data
 
   postgres:
     image: postgres:17.2
@@ -135,5 +135,7 @@ services:
 #     environment:
 #       ELASTICSEARCH_HOSTS: http://localhost:9200
 
-# volumes:
-#   grafana-data:
+volumes:
+  datanode-data:
+  namenode-data:
+  # grafana-data:
