@@ -69,4 +69,5 @@ Airflow 작업에 필요한 디렉토리와 권한을 HDFS에서 설정
 
 # TODO
  - [ ] Dockerfile 빌드 문서 작성 or docker-compose.yml 수정
+ - [ ] kaggle 데이터 압축 해제 스크립트 작성 
  
