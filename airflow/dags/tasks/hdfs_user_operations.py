@@ -5,12 +5,13 @@ def create_and_manage_user_hdfs_directory(username: str, folder: str, proxy_user
     Creates an HDFS directory and sets ownership and permissions.
 
     :param username: The username for the HDFS directory.
+    :param folder: The folder to be created inside the user's HDFS directory.
+    :param proxy_user: The proxy user to connect with WebHDFS.
     """
     hdfs_hook = WebHDFSHook(webhdfs_conn_id='hdfs_default', proxy_user=proxy_user)
     hdfs_client = hdfs_hook.get_conn()
 
     # Define HDFS path
-    hdfs_path = f"/user/{username}"
     folder_path = f"/user/{username}/{folder}"
 
     # Check if the directory already exists
@@ -21,14 +22,9 @@ def create_and_manage_user_hdfs_directory(username: str, folder: str, proxy_user
     else:
         print(f"Directory already exists: {folder_path}")
 
-    # Set ownership
-    hdfs_client.set_owner(hdfs_path, owner=username, group="supergroup")
-    print(f"Ownership set to {username}:supergroup for {hdfs_path}")
-    hdfs_client.set_owner(folder_path, owner=username, group="supergroup")
-    print(f"Ownership set to {username}:supergroup for {folder_path}")
+    parts = folder_path.split('/')
+    paths = ['/'.join(parts[:i+1]) for i in range(1, len(parts))]
 
-    # Set permissions
-    hdfs_client.set_permission(hdfs_path, permission=770) 
-    print(f"Permissions set to 770 for {hdfs_path}")
-    hdfs_client.set_permission(folder_path, permission=770) 
-    print(f"Permissions set to 770 for {folder_path}")
+    for path in paths:
+        hdfs_client.set_owner(path, owner=username, group="supergroup")
+        hdfs_client.set_permission(path, permission=770) 
