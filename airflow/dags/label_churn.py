@@ -65,14 +65,17 @@ def update_churn_table(**kwargs):
     conn = postgres_hook.get_conn()
     cursor = conn.cursor()
     
-    # Update the churn table for each customer_id
+    # Update or insert into the churn table for each customer_id
     for customer_id in customer_ids:
-        update_query = """
-        UPDATE churn
-        SET churn_status = TRUE, churn_date = %s
-        WHERE customer_id = %s;
+        upsert_query = """
+        INSERT INTO churn (customer_id, churn_status, churn_date)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (customer_id)
+        DO UPDATE SET
+            churn_status = EXCLUDED.churn_status,
+            churn_date = EXCLUDED.churn_date;
         """
-        cursor.execute(update_query, (datetime.today().strftime('%Y-%m-%d'), customer_id))
+        cursor.execute(upsert_query, (customer_id, True, datetime.today().strftime('%Y-%m-%d')))
     
     # Commit the transaction
     conn.commit()
