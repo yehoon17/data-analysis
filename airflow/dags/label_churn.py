@@ -75,7 +75,7 @@ def update_churn_table(**kwargs):
             churn_status = EXCLUDED.churn_status,
             churn_date = EXCLUDED.churn_date;
         """
-        cursor.execute(upsert_query, (customer_id, True, datetime.today().strftime('%Y-%m-%d')))
+        cursor.execute(upsert_query, (customer_id, False, datetime.today().strftime('%Y-%m-%d')))
     
     # Commit the transaction
     conn.commit()
