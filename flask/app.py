@@ -6,18 +6,13 @@ app = Flask(__name__)
 
 # Load Parquet data
 DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" # TODO: integrate docker compose via volume 
-UPLOAD_LOG = "uploaded_log.json"
 
 # Load data
 df = pd.read_parquet(DATA_PATH)
 df['date'] = pd.to_datetime(df['date'])
 
 # Load upload tracking log
-try:
-    with open(UPLOAD_LOG, "r") as f:
-        uploaded_log = json.load(f)
-except FileNotFoundError:
-    uploaded_log = {}
+latest_uploaded_date = '1999-01-01'
 
 # Convert DataFrame to a summary grouped by date
 def get_data_summary(year, month):
@@ -27,8 +22,9 @@ def get_data_summary(year, month):
         .size()
         .reset_index(name='count')
     )
+    summary['date'] = pd.to_datetime(summary['date'])
+    summary['is_uploaded'] = summary['date'].apply(lambda x: x <= pd.to_datetime(latest_uploaded_date))
     summary['date'] = summary['date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Format date here
-    summary['is_uploaded'] = summary['date'].astype(str).map(uploaded_log).fillna(False)
     return summary.to_dict(orient='records')
 
 
