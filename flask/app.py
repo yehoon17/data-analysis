@@ -1,17 +1,17 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-import json
+from kafka_producer import send_to_kafka
 
 app = Flask(__name__)
 
 # Load Parquet data
-DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" # TODO: integrate docker compose via volume 
+DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet"  # TODO: integrate docker compose via volume
 
 # Load data
 df = pd.read_parquet(DATA_PATH)
 df['date'] = pd.to_datetime(df['date'])
 
-# Load upload tracking log
+# Global variable to track the latest uploaded date
 latest_uploaded_date = '1999-01-01'
 
 # Convert DataFrame to a summary grouped by date
@@ -42,6 +42,28 @@ def get_data():
     month = int(request.args.get('month'))
     summary = get_data_summary(year, month)
     return jsonify(summary)
+
+
+@app.route('/upload', methods=['POST'])
+def upload_data():
+    global latest_uploaded_date  # Use global variable
+    if request.is_json:
+        data = request.get_json()  # Get the JSON data from the request
+        selected_date = data['date']  # Extract the 'date' key from the JSON
+        
+        # Filter data up to the selected date
+        upload_df = df[df['date'] <= selected_date]
+        
+        # Send each row to Kafka
+        for _, row in upload_df.iterrows():
+            send_to_kafka(row.to_dict())  
+
+        # Mark as uploaded and update the global variable
+        latest_uploaded_date = selected_date
+
+        return jsonify({"message": f"Data up to {selected_date} uploaded successfully!"})
+    else:
+        return jsonify({"error": "Request must be JSON"}), 400
 
 
 if __name__ == '__main__':

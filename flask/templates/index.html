@@ -94,7 +94,24 @@
                 console.error("Error fetching data:", error); // Log any errors
             });
         }
+        
+        function uploadData(date) {
+            if (confirm(`Upload all data up to ${date}?`)) {
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    contentType: 'application/json',  // Set correct content-type
+                    data: JSON.stringify({ date: date }),  // Send data as JSON string
+                    success: function(response) {
+                        alert(response.message);
+                        fetchData();
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error uploading data: " + xhr.responseText);
+                    }
+                });
+            }
+        }
     </script>
-
 </body>
 </html>
