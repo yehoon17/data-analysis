@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask-Kafka App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Flask-Kafka Data Uploader</h1>
+    </header>
+
+    <div class="container">
+        <div>
+            <label for="year">Select Year:</label>
+            <select id="year">
+                {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="month">Select Month:</label>
+            <select id="month">
+                {% for month in range(1, 13) %}
+                    <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+
+            <button onclick="fetchData()">Load Data</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Number of Data</th>
+                    <th>Uploaded</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                {% for row in data %}
+                    <tr>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.count }}</td>
+                        <td>{{ row.is_uploaded }}</td>
+                        <td>
+                            {% if row.is_uploaded %}
+                                ✔️ Uploaded
+                            {% else %}
+                                <button onclick="uploadData('{{ row.date }}')">Upload</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function fetchData() {
+            let year = $('#year').val();
+            let month = $('#month').val();
+
+            console.log("Fetching data for year:", year, "and month:", month); // Log the selection
+
+            $.get('/get_data', { year: year, month: month }, function(data) {
+                console.log("Data received:", data); // Log the received data
+                if (data) {
+                    let table = $('#data-table');
+                    table.html(''); // Clear previous data
+                    console.log("Clearing previous rows"); // Check clearing
+
+                    // Loop through the data and populate the table
+                    data.forEach(row => {
+                        console.log("Rendering row:", row); // Log each row
+
+                        let uploadBtn = row.is_uploaded ? "✔️ Uploaded" : `<button onclick="uploadData('${row.date}')">Upload</button>`;
+                        table.append(`<tr>
+                            <td>${row.date}</td>
+                            <td>${row.count}</td>
+                            <td>${row.is_uploaded}</td>
+                            <td>${uploadBtn}</td>
+                        </tr>`);
+                        console.log("Row added for date:", row.date); // Log when row is added
+                    });
+                } else {
+                    console.error("No data returned from the server");
+                }
+            }).fail(function(error) {
+                console.error("Error fetching data:", error); // Log any errors
+            });
+        }
+        
+        function uploadData(date) {
+            if (confirm(`Upload all data up to ${date}?`)) {
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    contentType: 'application/json',  // Set correct content-type
+                    data: JSON.stringify({ date: date }),  // Send data as JSON string
+                    success: function(response) {
+                        alert(response.message);
+                        fetchData();
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error uploading data: " + xhr.responseText);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
