@@ -4,7 +4,7 @@ from datetime import date
 from kafka.errors import NoBrokersAvailable
 
 KAFKA_TOPIC = "neo_bank_data"
-KAFKA_BROKER = "localhost:9092"
+KAFKA_BROKER = "kafka:9093"
 
 producer = None
 
