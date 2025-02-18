@@ -14,10 +14,15 @@
     </header>
 
     <div class="container">
-        <div style="display: inline-flex; align-items: center; gap: 20px;">
-            <p id="kafka-status">Kafka Status: Checking...</p>
-            <button onclick="checkKafka()">Check Kafka Connection</button>
-        </div>    
+        <div class="status-bar">
+            <div class="kafka-left">
+                <p id="kafka-status">Kafka Status: Checking...</p>
+                <button onclick="checkKafka()">Check Kafka Connection</button>
+            </div>
+            <div>
+                Latest Uploaded Date: <span id="latest-date">Not yet uploaded</span>
+            </div>
+        </div>   
         <div>
             <label for="year">Select Year:</label>
             <select id="year">
@@ -127,6 +132,7 @@
                     success: function(response) {
                         alert(response.message);
                         fetchData();
+                        $('#latest-date').text(date);
                     },
                     error: function(xhr, status, error) {
                         alert("Error uploading data: " + xhr.responseText);
