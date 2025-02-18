@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-from kafka_producer import send_to_kafka
+from kafka_producer import send_to_kafka, initialize_kafka_producer
 
 app = Flask(__name__)
 
@@ -64,6 +64,16 @@ def upload_data():
         return jsonify({"message": f"Data up to {selected_date} uploaded successfully!"})
     else:
         return jsonify({"error": "Request must be JSON"}), 400
+
+@app.route('/check_kafka', methods=['GET'])
+def check_kafka():
+    global kafka_connected
+    if initialize_kafka_producer():
+        kafka_connected = True
+        return jsonify({"message": "Kafka connection successful!", "status": "connected"})
+    else:
+        kafka_connected = False
+        return jsonify({"error": "Failed to connect to Kafka", "status": "disconnected"}), 500
 
 
 if __name__ == '__main__':
