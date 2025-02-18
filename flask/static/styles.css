@@ -85,3 +85,15 @@ tr:nth-child(even) {
 .action-btn:hover {
     background-color: #007B9A;
 }
+
+.status-bar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.kafka-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}

@@ -1,18 +1,18 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
-from kafka_producer import send_to_kafka
+from kafka_producer import send_to_kafka, initialize_kafka_producer
 
 app = Flask(__name__)
 
 # Load Parquet data
-DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet"  # TODO: integrate docker compose via volume
+DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" 
 
 # Load data
 df = pd.read_parquet(DATA_PATH)
 df['date'] = pd.to_datetime(df['date'])
 
 # Global variable to track the latest uploaded date
-latest_uploaded_date = '1999-01-01'
+latest_uploaded_date = None
 
 # Convert DataFrame to a summary grouped by date
 def get_data_summary(year, month):
@@ -23,7 +23,12 @@ def get_data_summary(year, month):
         .reset_index(name='count')
     )
     summary['date'] = pd.to_datetime(summary['date'])
-    summary['is_uploaded'] = summary['date'].apply(lambda x: x <= pd.to_datetime(latest_uploaded_date))
+
+    if latest_uploaded_date is None:
+        summary['is_uploaded'] = False
+    else:
+        summary['is_uploaded'] = summary['date'] <= pd.to_datetime(latest_uploaded_date)
+
     summary['date'] = summary['date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Format date here
     return summary.to_dict(orient='records')
 
@@ -64,6 +69,16 @@ def upload_data():
         return jsonify({"message": f"Data up to {selected_date} uploaded successfully!"})
     else:
         return jsonify({"error": "Request must be JSON"}), 400
+
+@app.route('/check_kafka', methods=['GET'])
+def check_kafka():
+    global kafka_connected
+    if initialize_kafka_producer():
+        kafka_connected = True
+        return jsonify({"message": "Kafka connection successful!", "status": "connected"})
+    else:
+        kafka_connected = False
+        return jsonify({"error": "Failed to connect to Kafka", "status": "disconnected"}), 500
 
 
 if __name__ == '__main__':

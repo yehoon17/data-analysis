@@ -14,6 +14,15 @@
     </header>
 
     <div class="container">
+        <div class="status-bar">
+            <div class="kafka-left">
+                <p id="kafka-status">Kafka Status: Checking...</p>
+                <button onclick="checkKafka()">Check Kafka Connection</button>
+            </div>
+            <div>
+                Latest Uploaded Date: <span id="latest-date">Not yet uploaded</span>
+            </div>
+        </div>   
         <div>
             <label for="year">Select Year:</label>
             <select id="year">
@@ -61,6 +70,24 @@
     </div>
 
     <script>
+        function checkKafka() {
+            fetch('/check_kafka')
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('kafka-status');
+                    if (data.status === "connected") {
+                        statusElement.textContent = "Kafka Status: Connected";
+                        statusElement.style.color = "green";
+                    } else {
+                        statusElement.textContent = "Kafka Status: Disconnected";
+                        statusElement.style.color = "red";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking Kafka connection:', error);
+                });
+        }
+
         function fetchData() {
             let year = $('#year').val();
             let month = $('#month').val();
@@ -105,6 +132,7 @@
                     success: function(response) {
                         alert(response.message);
                         fetchData();
+                        $('#latest-date').text(date);
                     },
                     error: function(xhr, status, error) {
                         alert("Error uploading data: " + xhr.responseText);
