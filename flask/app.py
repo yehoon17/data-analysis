@@ -12,7 +12,7 @@ df = pd.read_parquet(DATA_PATH)
 df['date'] = pd.to_datetime(df['date'])
 
 # Global variable to track the latest uploaded date
-latest_uploaded_date = '1999-01-01'
+latest_uploaded_date = None
 
 # Convert DataFrame to a summary grouped by date
 def get_data_summary(year, month):
@@ -23,7 +23,12 @@ def get_data_summary(year, month):
         .reset_index(name='count')
     )
     summary['date'] = pd.to_datetime(summary['date'])
-    summary['is_uploaded'] = summary['date'].apply(lambda x: x <= pd.to_datetime(latest_uploaded_date))
+
+    if latest_uploaded_date is None:
+        summary['is_uploaded'] = False
+    else:
+        summary['is_uploaded'] = summary['date'] <= pd.to_datetime(latest_uploaded_date)
+
     summary['date'] = summary['date'].apply(lambda x: x.strftime('%Y-%m-%d'))  # Format date here
     return summary.to_dict(orient='records')
 
