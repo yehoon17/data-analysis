@@ -62,7 +62,10 @@ services:
       - -c
       - |
         confluent-hub install --no-prompt confluentinc/kafka-connect-hdfs:latest
-        /etc/confluent/docker/run
+        /etc/confluent/docker/run &
+        sleep 10
+        curl -X POST -H "Content-Type: application/json" --data @/hdfs-sink-config/hdfs-sink.json http://localhost:8083/connectors
+        wait
 
   flask:
     build: ./flask
