@@ -34,6 +34,33 @@ services:
     ports:
       - "8081:8080"
       
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:7.8.0
+    container_name: kafka-connect
+    depends_on:
+      - kafka
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "kafka:9093"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_GROUP_ID: "connect-cluster"
+      CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_PLUGIN_PATH: "/usr/share/confluent-hub-components"
+    volumes:
+      - ./kafka/hdfs-sink-config:/hdfs-sink-config
+    ports:
+      - "8083:8083"
+    command:
+      - bash
+      - -c
+      - |
+        confluent-hub install --no-prompt confluentinc/kafka-connect-hdfs:latest
+        /etc/confluent/docker/run
+
   flask:
     build: ./flask
     ports:
