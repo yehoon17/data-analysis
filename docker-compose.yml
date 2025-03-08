@@ -34,6 +34,18 @@ services:
     ports:
       - "8081:8080"
       
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.8.0
+    container_name: schema-registry
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:9093"
+      SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8082"
+    ports:
+      - "8082:8082"
+
   kafka-connect:
     image: confluentinc/cp-kafka-connect:7.8.0
     container_name: kafka-connect
