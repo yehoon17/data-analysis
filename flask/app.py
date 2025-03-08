@@ -58,6 +58,8 @@ def upload_data():
         
         # Filter data up to the selected date
         upload_df = df[df['date'] <= selected_date]
+        if latest_uploaded_date:
+            upload_df = upload_df[upload_df['date'] > latest_uploaded_date]
         
         # Send each row to Kafka
         for _, row in upload_df.iterrows():
