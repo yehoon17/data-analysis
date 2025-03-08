@@ -1,18 +1,19 @@
 {
   "name": "hdfs-sink",
   "config": {
-      "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-      "tasks.max": "1",
-      "topics": "neo_bank_data",
-      "hdfs.url": "hdfs://namenode:9000",
-      "flush.size": "10",
-      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-      "value.converter.schemas.enable": "false",
-      "format.class": "io.confluent.connect.hdfs.parquet.ParquetFormat",
-      "storage.class": "io.confluent.connect.hdfs.storage.HdfsStorage",
-      "logs.dir": "/user/appuser/neo_bank_data/logs",
-      "topics.dir": "/user/appuser/neo_bank_data",
-      "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner"
+    "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+    "tasks.max": "1",
+    "topics": "neo_bank_data",
+    "hdfs.url": "hdfs://namenode:9000",
+    "flush.size": "100",
+    "format.class": "io.confluent.connect.hdfs.parquet.ParquetFormat",
+    "path.format": "/user/appuser/neo_bank_data",
+    "timestamp.extractor": "Record",
+    "topics.dir": "/user/appuser/neo_bank_data",
+    "logs.dir": "/user/appuser/neo_bank_data/logs",
+    "schema.compatibility": "NONE",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8082",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter"
   }
 }
