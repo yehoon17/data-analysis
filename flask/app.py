@@ -5,7 +5,8 @@ from kafka_producer import send_to_kafka, initialize_kafka_producer
 app = Flask(__name__)
 
 # Load Parquet data
-DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" 
+# DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" 
+DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/top_5000.parquet" 
 
 # Load data
 df = pd.read_parquet(DATA_PATH)
