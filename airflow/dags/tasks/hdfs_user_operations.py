@@ -23,7 +23,7 @@ def create_and_manage_user_hdfs_directory(username: str, folder: str, proxy_user
         print(f"Directory already exists: {folder_path}")
 
     parts = folder_path.split('/')
-    paths = ['/'.join(parts[:i+1]) for i in range(1, len(parts))]
+    paths = ['/'.join(parts[:i+1]) for i in range(2, len(parts))]
 
     for path in paths:
         hdfs_client.set_owner(path, owner=username, group="supergroup")

@@ -5,7 +5,8 @@ from kafka_producer import send_to_kafka, initialize_kafka_producer
 app = Flask(__name__)
 
 # Load Parquet data
-DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" 
+# DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/test.parquet" 
+DATA_PATH = "../raw_data/neo-bank-non-sub-churn-prediction/top_5000.parquet" 
 
 # Load data
 df = pd.read_parquet(DATA_PATH)
@@ -58,6 +59,8 @@ def upload_data():
         
         # Filter data up to the selected date
         upload_df = df[df['date'] <= selected_date]
+        if latest_uploaded_date:
+            upload_df = upload_df[upload_df['date'] > latest_uploaded_date]
         
         # Send each row to Kafka
         for _, row in upload_df.iterrows():

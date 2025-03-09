@@ -2,3 +2,4 @@ flask
 pandas
 kafka-python
 pyarrow
+confluent-kafka[avro]
