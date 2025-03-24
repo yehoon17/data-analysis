@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgres:5432  
+    database: task_db
+    user: task_user
+    secureJsonData:
+      password: task_password
+    jsonData:
+      sslmode: "disable"
+      postgresVersion: 1700
+      timescaledb: false
