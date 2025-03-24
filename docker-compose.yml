@@ -121,12 +121,19 @@ services:
 #     volumes:
 #       - ./notebooks:/home/jovyan/work
 
-#   grafana:
-#     image: grafana/grafana:latest
-#     ports:
-#       - "3000:3000"
-#     volumes:
-#       - grafana-data:/var/lib/grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      # - grafana_data:/var/lib/grafana
 
 #   kibana:
 #     image: docker.elastic.co/kibana/kibana:8.17.0
