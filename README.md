@@ -1,6 +1,6 @@
 # 데이터 분석 통합 시스템
 
-이 프로젝트는 **Kafka**, **Airflow**, **PostgreSQL**, **Kafka Connect**, **Grafana**, **Kibana**, **Jupyter Notebooks** 등을 활용하여 로컬 환경에서 데이터 파이프라인을 구축하기 위한 예제입니다. 주로 Kaggle 데이터셋을 활용하며, 대규모 데이터 저장을 위해 **HDFS**와의 통합을 포함합니다.
+이 프로젝트는 **Kafka**, **Airflow**, **PostgreSQL**, **Kafka Connect**, **Grafana**, **Jupyter Notebooks** 등을 활용하여 로컬 환경에서 데이터 파이프라인을 구축하기 위한 예제입니다. 주로 Kaggle 데이터셋을 활용하며, 대규모 데이터 저장을 위해 **HDFS**와의 통합을 포함합니다.
 
 ## 목차
 - [기술 스택](#기술-스택)
@@ -16,7 +16,7 @@
 - **Airflow**: ETL 파이프라인 오케스트레이션
 - **PostgreSQL**: 구조화된 데이터 저장소
 - **Kafka Connect**: Kafka와 외부 시스템(PostgreSQL 등) 연결
-- **Grafana & Kibana**: 모니터링 및 로그 시각화 도구
+- **Grafana**: 모니터링 및 로그 시각화 도구
 - **Jupyter Notebooks**: 데이터 탐색 및 분석 환경
 - **HDFS**: 분산 파일 시스템
 - **Docker**: 서비스 컨테이너화 및 오케스트레이션
